@@ -1,3 +1,6 @@
+// HuffmanCoding.cpp : Defines the entry point for the console application.
+//
+
 #include <iostream>
 #include <unordered_map>
 #include <algorithm>
@@ -5,6 +8,8 @@
 #include <utility>
 #include <sstream>
 #include <bitset>
+#include <fstream>
+#include <cassert>
 
 struct TreeNode {
 	char ch;
@@ -26,9 +31,9 @@ public:
 		typedef std::priority_queue<TreeNode*, std::vector<TreeNode*>,
 			decltype(mycomp)> minheap;
 		minheap myheap(mycomp);
-		std::cout << "char frequence:\n";
+		//std::cout << "char frequence:\n";
 		for (auto &x : charmap) {
-			std::cout << x.first << " and " << x.second << std::endl;
+			//std::cout << x.first << " and " << x.second << std::endl;
 			myheap.push(new TreeNode(x.first, x.second));
 		}
 		//TreeNode* tmp11 = myheap.top();
@@ -48,7 +53,7 @@ public:
 			tmp->right = myheap.top();
 			myheap.pop();
 			tmp->fre = tmp->left->fre + tmp->right->fre;
-			std::cout << "processing " << tmp->left->ch << tmp->left->fre << " and " << tmp->right->ch << tmp->right->fre << std::endl;
+			//std::cout << "processing " << tmp->left->ch << tmp->left->fre << " and " << tmp->right->ch << tmp->right->fre << std::endl;
 			myheap.push(tmp);
 		}
 		root = myheap.top();
@@ -58,9 +63,9 @@ public:
 	void constructHuffmanTable(TreeNode* root) {
 		std::cout << "constructing huffman table..." << std::endl;
 		dfsConstructTb(root, hufftb, "");
-		std::cout << hufftb.size() << std::endl;
-		for (auto x : hufftb)
-			std::cout << x.first << " and " << x.second << std::endl;
+		//std::cout << hufftb.size() << std::endl;
+		//for (auto x : hufftb)
+		//	std::cout << x.first << " and " << x.second << std::endl;
 	}
 	std::string zip(std::string& str) {
 		constructTree(str);
@@ -102,10 +107,10 @@ public:
 		}
 		//std::cout << (int)str.back() << std::endl;
 		int L = tmp.length() - (int)str.back();
-		std::cout << tmp << std::endl;
+		//std::cout << tmp << std::endl;
 		TreeNode* curr = root;
 		for (int i = 0; i <= L; i++) {
-			std::cout << tmp[i];
+			//std::cout << tmp[i];
 			if (curr->left == nullptr&&curr->right == nullptr) {
 				buff.push_back(curr->ch);
 				curr = root;
@@ -141,12 +146,34 @@ private:
 };
 
 int main() {
-	std::string str = "bbbbbegingggggg attttttack tonnnnnnight aaaaaaaand fffffffuck thhhhhhem allllllllllll";
+	std::fstream input("F:\\IMG_5901.MP4");
+	//std::fstream output("F:\\output.txt");
+	assert(input.is_open());
+	std::string tmp;
+	std::string rawstr;
+	while (std::getline(input, tmp)) {
+		rawstr += tmp;
+		rawstr.push_back('\n');
+	}
+	//std::cout << rawstr << std::endl;
+	//std::string str = "bbbbbegingggggg attttttack tonnnnnnight aaaaaaaand fffffffuck thhhhhhem allllllllllll";
 	Huffman huff;
-	std::string res = huff.zip(str);
-	std::cout << (str.length()- res.length())*1.0/str.length() << std::endl;
-	std::cout << huff.unzip(res) << std::endl;
-	std::cout << str << std::endl;
+	//std::string res = huff.zip(str);
+	//std::cout << (str.length()- res.length())*1.0/str.length() << std::endl;
+	//std::cout << huff.unzip(res) << std::endl;
+	//std::cout << str << std::endl;
+	std::string zipped = huff.zip(rawstr);
+	//output.write(&zipped[0], zipped.length());
+	//std::string tmp1;
+	//std::getline(output, tmp1);
+	std::string unzipped = huff.unzip(zipped);
+	if (rawstr == unzipped)
+		std::cout << "Well Done.\n";
+	else
+		std::cout << "Shit!\n";
+	std::cout << (rawstr.length() - zipped.length())*1.0 / rawstr.length();
+	input.close();
+	//output.close();
 	return 0;
 }
 
